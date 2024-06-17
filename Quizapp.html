@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Quiz App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #333;
+        }
+
+        #quiz {
+            margin-bottom: 20px;
+        }
+
+        #question {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        #options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .option:hover {
+            background-color: #e9ecef;
+        }
+
+        #next {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Initially hidden */
+        }
+
+        #next:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 1.2rem;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MCQ Quiz App</h1>
+        </header>
+        <main>
+            <div id="quiz">
+                <div id="question"></div>
+                <div id="options"></div>
+                <button id="next">Next Question</button>
+            </div>
+            <div id="result"></div>
+        </main>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Paris", "Berlin", "Madrid", "London"],
+                answer: "Paris"
+            },
+            {
+                question: "Who wrote 'Romeo and Juliet'?",
+                options: ["William Shakespeare", "Jane Austen", "Charles Dickens", "Mark Twain"],
+                answer: "William Shakespeare"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Jupiter", "Mars", "Saturn"],
+                answer: "Mars"
+            },
+            {
+                question: "Who painted the Mona Lisa?",
+                options: ["Pablo Picasso", "Leonardo da Vinci", "Vincent van Gogh", "Michelangelo"],
+                answer: "Leonardo da Vinci"
+            }
+        ];
+
+        const quiz = document.getElementById('quiz');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const nextButton = document.getElementById('next');
+        const resultElement = document.getElementById('result');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Load question
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            
+            optionsElement.innerHTML = '';
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(option, index));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(option, index) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            const correctAnswer = currentQuestion.answer;
+
+            if (option === correctAnswer) {
+                score++;
+                resultElement.textContent = "Correct!";
+                resultElement.className = 'correct';
+            } else {
+                resultElement.textContent = "Incorrect! The correct answer is: " + correctAnswer;
+                resultElement.className = 'incorrect';
+            }
+
+            // Disable further clicks on options
+            optionsElement.querySelectorAll('.option').forEach(optionElement => {
+                optionElement.style.pointerEvents = 'none';
+            });
+
+            // Show result and show next button
+            resultElement.style.display = 'block';
+            nextButton.style.display = 'block';
+        }
+
+        // Event listener for next button
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+                resultElement.style.display = 'none';
+                nextButton.style.display = 'none';
+            } else {
+                showFinalScore();
+            }
+        });
+
+        // Show final score
+        function showFinalScore() {
+            quiz.style.display = 'none';
+            resultElement.textContent = `Quiz completed! Your score is ${score}/${quizData.length}`;
+            resultElement.style.display = 'block';
+        }
+
+        // Initial load
+        loadQuestion();
+    </script>
+</body>
+</html>
